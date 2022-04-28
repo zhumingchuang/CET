@@ -4,6 +4,9 @@ namespace ET
 {
     public class ActorMessageSenderComponent: Entity, IAwake, IDestroy
     {
+        /// <summary>
+        /// 超时时间
+        /// </summary>
         public static long TIMEOUT_TIME = 40 * 1000;
 
         public static ActorMessageSenderComponent Instance { get; set; }

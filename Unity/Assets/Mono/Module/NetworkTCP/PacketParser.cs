@@ -9,6 +9,10 @@ namespace ET
 		PacketBody
 	}
 
+	/// <summary>
+	/// 数据解析
+	/// 将CircularBuffer，与MemoryStream类关联起来
+	/// </summary>
 	public class PacketParser
 	{
 		private readonly CircularBuffer buffer;
@@ -26,12 +30,26 @@ namespace ET
 			this.service = service;
 		}
 
+		/// <summary>
+		/// 确保将Buffer里面的数据以规定的规格读取到MemoryStream
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		/// 如果是数据大小阶段，则首先通过buffer长度，与packetSizeLength比较，确定数据是否处理完毕
+		/// 未处理完毕，则从buffer取出规定长度的字节，再根据设定的包体大小字节数，将其转换成对应的ToInt32，
+		/// ToUInt16值存放到packetSize中，将这个值作为后续包体大小的值，然后与设置好的值进行比较，
+		/// 通过了设置状态，从而进行下一步处理
+		/// PacketBody阶段，判定buffer剩余长度与解出来的packetSize进行比较，小于它，则认为已经处理完毕
+		/// 如果不小于他，则正常流程，就是将buffer内，长度为packetSize的内容，读取到memoryStream中，然后处理完毕
+		/// 可以保证黏包问题，有多余的数据，不会进入到memoryStream影响后续的数据处理
 		public bool Parse()
 		{
 			while (true)
 			{
 				switch (this.state)
 				{
+					//确认消息数据大小阶段
 					case ParserState.PacketSize:
 					{
 						if (this.service.ServiceType == ServiceType.Inner)
@@ -68,6 +86,7 @@ namespace ET
 						this.state = ParserState.PacketBody;
 						break;
 					}
+					//处理消息数据本身阶段
 					case ParserState.PacketBody:
 					{
 						if (this.buffer.Length < this.packetSize)

@@ -15,6 +15,12 @@ namespace ET
         }
     }
 
+    /// <summary>
+    /// 消息上下文信息
+    /// 每个Session都是对一个连接的封装，他基于channel之上，增加消息发送的额外功能，比如消息的序列化
+    /// 与反序列化，IResponse类消息如何在处理完消息后立刻发送回来等等
+    /// 它是底层channel与实际NetworkComponent之间沟通的桥梁
+    /// </summary>
     public sealed class Session: Entity, IAwake<AService>
     {
         private readonly struct RpcInfo

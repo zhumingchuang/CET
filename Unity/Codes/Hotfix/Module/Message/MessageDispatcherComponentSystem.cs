@@ -65,6 +65,12 @@ namespace ET
             }
         }
 
+        /// <summary>
+        /// 根据协议ID 添加到消息处理列表
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="opcode">协议ID</param>
+        /// <param name="handler">协议处理实例</param>
         public static void RegisterHandler(this MessageDispatcherComponent self, ushort opcode, IMHandler handler)
         {
             if (!self.Handlers.ContainsKey(opcode))
@@ -75,6 +81,13 @@ namespace ET
             self.Handlers[opcode].Add(handler);
         }
 
+        /// <summary>
+        /// 通过协议ID获取对应处理类的列表  调用各处理方法的实例
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="session"></param>
+        /// <param name="opcode">协议ID</param>
+        /// <param name="message"></param>
         public static void Handle(this MessageDispatcherComponent self, Session session, ushort opcode, object message)
         {
             List<IMHandler> actions;

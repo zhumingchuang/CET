@@ -11,11 +11,20 @@ namespace ET
 	public sealed class TChannel: AChannel
 	{
 		private readonly TService Service;
+
+		//基本的套接字功能类
 		private Socket socket;
+
+		//用于监听接收接收数据的事件监听
 		private SocketAsyncEventArgs innArgs = new SocketAsyncEventArgs();
+
+		//用于主动发起连接时的socket事件监听
 		private SocketAsyncEventArgs outArgs = new SocketAsyncEventArgs();
 
+		//用于处理发送数据的buffer
 		private readonly CircularBuffer recvBuffer = new CircularBuffer();
+
+		//用于接收套接字数据
 		private readonly CircularBuffer sendBuffer = new CircularBuffer();
 
 		private bool isSending;
@@ -194,6 +203,9 @@ namespace ET
 			this.OnError((int)e.SocketError);
 		}
 
+		/// <summary>
+		/// 开始接收
+		/// </summary>
 		private void StartRecv()
 		{
 			while (true)
@@ -293,6 +305,10 @@ namespace ET
 			this.StartSend();
 		}
 
+		/// <summary>
+		/// 开始发送
+		/// </summary>
+		/// <exception cref="Exception"></exception>
 		private void StartSend()
 		{
 			if(!this.isConnected)

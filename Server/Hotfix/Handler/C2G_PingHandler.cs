@@ -3,6 +3,9 @@
 
 namespace ET
 {
+	/// <summary>
+	/// Ping 消息处理
+	/// </summary>
 	[MessageHandler]
 	public class C2G_PingHandler : AMRpcHandler<C2G_Ping, G2C_Ping>
 	{

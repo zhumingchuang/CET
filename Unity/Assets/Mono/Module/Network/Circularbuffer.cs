@@ -4,7 +4,10 @@ using System.IO;
 
 namespace ET
 {
-    public class CircularBuffer: Stream
+	/// <summary>
+	/// 封装字节数组，在内部通过循环使用的方式提升性能
+	/// </summary>
+	public class CircularBuffer: Stream
     {
         public int ChunkSize = 8192;
 

@@ -22,13 +22,17 @@ namespace ET
         }
     }
 
+    /// <summary>
+    /// 通信协议数据结构组件
+    /// </summary>
     public class OpcodeTypeComponent: Entity, IAwake, IDestroy
     {
         public static OpcodeTypeComponent Instance;
         
         private HashSet<ushort> outrActorMessage = new HashSet<ushort>();
-        
+        //协议ID对应协议数据类型
         private readonly Dictionary<ushort, Type> opcodeTypes = new Dictionary<ushort, Type>();
+        //协议数据类型对应协议ID
         private readonly Dictionary<Type, ushort> typeOpcodes = new Dictionary<Type, ushort>();
         
         private readonly Dictionary<Type, Type> requestResponse = new Dictionary<Type, Type>();
@@ -58,6 +62,7 @@ namespace ET
                 this.opcodeTypes.Add(messageAttribute.Opcode, type);
                 this.typeOpcodes.Add(type, messageAttribute.Opcode);
 
+                //判断是否为外网协议ID 并且不需要返回消息
                 if (OpcodeHelper.IsOuterMessage(messageAttribute.Opcode) && typeof (IActorMessage).IsAssignableFrom(type))
                 {
                     this.outrActorMessage.Add(messageAttribute.Opcode);
@@ -90,6 +95,11 @@ namespace ET
             return this.outrActorMessage.Contains(opcode);
         }
 
+        /// <summary>
+        /// 根据协议数据类型获取协议ID
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public ushort GetOpcode(Type type)
         {
             return this.typeOpcodes[type];

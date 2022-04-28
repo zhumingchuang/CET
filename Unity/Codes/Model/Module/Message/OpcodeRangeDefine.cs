@@ -5,10 +5,19 @@
         // 10001 - 30000 是pb，中间分成两个部分，外网pb跟内网pb
         public const ushort PbMinOpcode = 10001;
         
+        /// <summary>
+        /// 外网最小协议ID
+        /// </summary>
         public const ushort OuterMinOpcode = 10001;
+        /// <summary>
+        /// 外网最大协议ID
+        /// </summary>
         public const ushort OuterMaxOpcode = 20000;
 
         // 20001-30000 内网pb
+        /// <summary>
+        /// 内网最小协议ID
+        /// </summary>
         public const ushort InnerMinOpcode = 20001;
         
         public const ushort PbMaxOpcode = 30000;

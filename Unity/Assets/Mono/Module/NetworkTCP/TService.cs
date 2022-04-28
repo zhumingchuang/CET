@@ -9,12 +9,16 @@ namespace ET
 {
 	public sealed class TService : AService
 	{
+		//用于管理各个Channel
 		private readonly Dictionary<long, TChannel> idChannels = new Dictionary<long, TChannel>();
 
+		//socekt事件的处理类
 		private readonly SocketAsyncEventArgs innArgs = new SocketAsyncEventArgs();
-		
+
+		//主要用于作为服务器端监听连接使用的socket
 		private Socket acceptor;
 
+		//一个保存有需要发送数据Channel的id
 		public HashSet<long> NeedStartSend = new HashSet<long>();
 
 		public TService(ThreadSynchronizationContext threadSynchronizationContext, ServiceType serviceType)
