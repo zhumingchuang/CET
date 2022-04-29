@@ -19,6 +19,9 @@ namespace ET
         }
     }
 
+    /// <summary>
+    /// 服务器内部网络组件
+    /// </summary>
     [ChildType(typeof(Session))]
     public class NetInnerComponent: Entity, IAwake<IPEndPoint, int>, IAwake<int>, IDestroy
     {
@@ -26,6 +29,9 @@ namespace ET
 
         public static NetInnerComponent Instance;
 
+        /// <summary>
+        /// 会话流调度类型  服务器内部
+        /// </summary>
         public int SessionStreamDispatcherType { get; set; }
     }
 }

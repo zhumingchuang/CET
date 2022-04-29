@@ -15,22 +15,32 @@ namespace ET
 		//基本的套接字功能类
 		private Socket socket;
 
-		//用于监听接收接收数据的事件监听
+		//用于监听接收数据的事件
 		private SocketAsyncEventArgs innArgs = new SocketAsyncEventArgs();
 
+		//用户监听发送事件
 		//用于主动发起连接时的socket事件监听
 		private SocketAsyncEventArgs outArgs = new SocketAsyncEventArgs();
 
-		//用于处理发送数据的buffer
+		//用于处理接收数据的buffer
 		private readonly CircularBuffer recvBuffer = new CircularBuffer();
 
-		//用于接收套接字数据
+		//用于发送套接字数据
 		private readonly CircularBuffer sendBuffer = new CircularBuffer();
 
+		/// <summary>
+		/// 是否在发送
+		/// </summary>
 		private bool isSending;
 
+		/// <summary>
+		/// 是否连接
+		/// </summary>
 		private bool isConnected;
 
+		/// <summary>
+		/// 数据包解析
+		/// </summary>
 		private readonly PacketParser parser;
 
 		private readonly byte[] sendCache = new byte[Packet.OpcodeLength + Packet.ActorIdLength];
@@ -39,15 +49,19 @@ namespace ET
 		{
 			switch (e.LastOperation)
 			{
+				//连接完成
 				case SocketAsyncOperation.Connect:
 					this.Service.ThreadSynchronizationContext.Post(()=>OnConnectComplete(e));
 					break;
+			    //接收数据
 				case SocketAsyncOperation.Receive:
 					this.Service.ThreadSynchronizationContext.Post(()=>OnRecvComplete(e));
 					break;
+				//发送状态
 				case SocketAsyncOperation.Send:
 					this.Service.ThreadSynchronizationContext.Post(()=>OnSendComplete(e));
 					break;
+				//断开连接
 				case SocketAsyncOperation.Disconnect:
 					this.Service.ThreadSynchronizationContext.Post(()=>OnDisconnectComplete(e));
 					break;
@@ -58,6 +72,12 @@ namespace ET
 
 #region 网络线程
 		
+		/// <summary>
+		/// 通道构造函数 用来主动连接
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="ipEndPoint"></param>
+		/// <param name="service"></param>
 		public TChannel(long id, IPEndPoint ipEndPoint, TService service)
 		{
 			this.ChannelType = ChannelType.Connect;
@@ -75,7 +95,13 @@ namespace ET
 
 			this.Service.ThreadSynchronizationContext.PostNext(this.ConnectAsync);
 		}
-		
+
+		/// <summary>
+		/// 连接通道 服务器构造函数
+		/// </summary>
+		/// <param name="id">连接通道ID</param>
+		/// <param name="socket">服务器socket</param>
+		/// <param name="service"></param>
 		public TChannel(long id, Socket socket, TService service)
 		{
 			this.ChannelType = ChannelType.Accept;
@@ -121,6 +147,12 @@ namespace ET
 			this.socket = null;
 		}
 
+		/// <summary>
+		/// 发送数据
+		/// </summary>
+		/// <param name="actorId"></param>
+		/// <param name="stream"></param>
+		/// <exception cref="Exception"></exception>
 		public void Send(long actorId, MemoryStream stream)
 		{
 			if (this.IsDisposed)
@@ -159,7 +191,7 @@ namespace ET
 				}
 			}
 			
-
+			//如果当前没有在发送数据 把通道ID存在列表中等待发送
 			if (!this.isSending)
 			{
 				//this.StartSend();
@@ -167,9 +199,13 @@ namespace ET
 			}
 		}
 
+		/// <summary>
+		/// 异步连接
+		/// </summary>
 		private void ConnectAsync()
 		{
 			this.outArgs.RemoteEndPoint = this.RemoteAddress;
+			//异步连接
 			if (this.socket.ConnectAsync(this.outArgs))
 			{
 				return;
@@ -177,6 +213,10 @@ namespace ET
 			OnConnectComplete(this.outArgs);
 		}
 
+		/// <summary>
+		/// 连接完成
+		/// </summary>
+		/// <param name="o"></param>
 		private void OnConnectComplete(object o)
 		{
 			if (this.socket == null)
@@ -227,6 +267,7 @@ namespace ET
 					return;
 				}
 			
+				//异步接收数据
 				if (this.socket.ReceiveAsync(this.innArgs))
 				{
 					return;
@@ -235,6 +276,10 @@ namespace ET
 			}
 		}
 
+		/// <summary>
+		/// 异步接收数据事件
+		/// </summary>
+		/// <param name="o"></param>
 		private void OnRecvComplete(object o)
 		{
 			this.HandleRecv(o);
@@ -246,6 +291,10 @@ namespace ET
 			this.StartRecv();
 		}
 
+		/// <summary>
+		/// 处理接收数据
+		/// </summary>
+		/// <param name="o"></param>
 		private void HandleRecv(object o)
 		{
 			if (this.socket == null)
@@ -300,6 +349,9 @@ namespace ET
 			}
 		}
 
+		/// <summary>
+		/// 刷新需要发送的数据
+		/// </summary>
 		public void Update()
 		{
 			this.StartSend();
@@ -348,6 +400,7 @@ namespace ET
 					
 					this.outArgs.SetBuffer(this.sendBuffer.First, this.sendBuffer.FirstIndex, sendSize);
 					
+					//异步发送数据
 					if (this.socket.SendAsync(this.outArgs))
 					{
 						return;
@@ -362,6 +415,10 @@ namespace ET
 			}
 		}
 
+		/// <summary>
+		/// 发送事件
+		/// </summary>
+		/// <param name="o"></param>
 		private void OnSendComplete(object o)
 		{
 			HandleSend(o);
@@ -371,6 +428,10 @@ namespace ET
 			this.StartSend();
 		}
 
+		/// <summary>
+		/// 处理发送数据
+		/// </summary>
+		/// <param name="o"></param>
 		private void HandleSend(object o)
 		{
 			if (this.socket == null)
@@ -400,6 +461,10 @@ namespace ET
 			}
 		}
 		
+		/// <summary>
+		/// 读取接收数据事件
+		/// </summary>
+		/// <param name="memoryStream"></param>
 		private void OnRead(MemoryStream memoryStream)
 		{
 			try

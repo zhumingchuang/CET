@@ -4,9 +4,21 @@ using System.Net;
 
 namespace ET
 {
+	/// <summary>
+	/// channel 连接类型
+	/// </summary>
 	public enum ChannelType
 	{
+		/// <summary>
+		/// 连接
+		/// 以客户端方式发起连接
+		/// </summary>
 		Connect,
+
+		/// <summary>
+		/// 接受
+		/// 作为服务器等待连接
+		/// </summary>
 		Accept,
 	}
 
@@ -27,12 +39,21 @@ namespace ET
 
 	public abstract class AChannel: IDisposable
 	{
+		/// <summary>
+		/// 通道ID
+		/// </summary>
 		public long Id;
 		
+		/// <summary>
+		/// 连接类型
+		/// </summary>
 		public ChannelType ChannelType { get; protected set; }
 
 		public int Error { get; set; }
 		
+		/// <summary>
+		/// 连接地址
+		/// </summary>
 		public IPEndPoint RemoteAddress { get; set; }
 
 		

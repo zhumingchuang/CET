@@ -36,7 +36,11 @@ namespace ET
         }
 
         public AService AService;
-        
+
+        /// <summary>
+        /// 当发送需要带有返回协议的数据通过Session发出时 RpcId自增
+        /// 并添加到发送的数据中去，当对方将数据发送回来时，通过解析到的RpcId 就能得到相应处理
+        /// </summary>
         private static int RpcId
         {
             get;
@@ -45,12 +49,18 @@ namespace ET
 
         private readonly Dictionary<int, RpcInfo> requestCallbacks = new Dictionary<int, RpcInfo>();
         
+        /// <summary>
+        /// 最后接收的时间
+        /// </summary>
         public long LastRecvTime
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// 最后发送的时间
+        /// </summary>
         public long LastSendTime
         {
             get;

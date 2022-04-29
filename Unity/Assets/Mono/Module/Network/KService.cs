@@ -17,9 +17,18 @@ namespace ET
         public const byte MSG = 4;
     }
 
+    /// <summary>
+    /// 服务类型
+    /// </summary>
     public enum ServiceType
     {
+        /// <summary>
+        /// 外部
+        /// </summary>
         Outer,
+        /// <summary>
+        /// 内部
+        /// </summary>
         Inner,
     }
 
