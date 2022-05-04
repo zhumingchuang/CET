@@ -1,8 +1,5 @@
 namespace ET
 {
-	/// <summary>
-	/// ÄÚÍøĞ­ÒéID
-	/// </summary>
 	public static partial class InnerOpcode
 	{
 		 public const ushort ObjectQueryRequest = 20002;

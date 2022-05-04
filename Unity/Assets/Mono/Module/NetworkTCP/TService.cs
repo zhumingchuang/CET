@@ -26,8 +26,10 @@ namespace ET
 		//一个保存有需要发送数据Channel的id
 		public HashSet<long> NeedStartSend = new HashSet<long>();
 
+		//主动发送连接
 		public TService(ThreadSynchronizationContext threadSynchronizationContext, ServiceType serviceType)
 		{
+			Log.Debug($"创建 TService{GetHashCode()}");
 			this.foreachAction = channelId =>
 			{
 				TChannel tChannel = this.Get(channelId);
@@ -37,8 +39,10 @@ namespace ET
 			this.ThreadSynchronizationContext = threadSynchronizationContext;
 		}
 
+		//作为服务器 建立连接的通道
 		public TService(ThreadSynchronizationContext threadSynchronizationContext, IPEndPoint ipEndPoint, ServiceType serviceType)
 		{
+			Log.Debug($"创建 TService{GetHashCode()}");
 			this.foreachAction = channelId =>
 			{
 				TChannel tChannel = this.Get(channelId);
@@ -64,7 +68,6 @@ namespace ET
 				case SocketAsyncOperation.Accept:
 					SocketError socketError = e.SocketError;
 					Socket acceptSocket = e.AcceptSocket;
-					Log.Debug(e.LastOperation + "接收到完成消息");
 					this.ThreadSynchronizationContext.Post(()=>{this.OnAcceptComplete(socketError, acceptSocket);});
 					break;
 				default:

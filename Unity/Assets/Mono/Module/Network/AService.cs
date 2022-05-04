@@ -86,6 +86,9 @@ namespace ET
         }
 
         
+        /// <summary>
+        /// 接受连接事件
+        /// </summary>
         public Action<long, IPEndPoint> AcceptCallback;
         public Action<long, int> ErrorCallback;
         public Action<long, MemoryStream> ReadCallback;

@@ -54,9 +54,16 @@ namespace ET
     [FriendClass(typeof(NetInnerComponent))]
     public static class NetInnerComponentSystem
     {
+        /// <summary>
+        /// 读取接收的数据
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="channelId"></param>
+        /// <param name="memoryStream"></param>
         public static void OnRead(this NetInnerComponent self, long channelId, MemoryStream memoryStream)
         {
             Session session = self.GetChild<Session>(channelId);
+            Log.Debug($"{session==null}");
             if (session == null)
             {
                 return;
@@ -81,6 +88,7 @@ namespace ET
         // 这个channelId是由CreateAcceptChannelId生成的
         public static void OnAccept(this NetInnerComponent self, long channelId, IPEndPoint ipEndPoint)
         {
+            Log.Debug("接受连接");
             Session session = self.AddChildWithId<Session, AService>(channelId, self.Service);
             session.RemoteAddress = ipEndPoint;
             //session.AddComponent<SessionIdleCheckerComponent, int, int, int>(NetThreadComponent.checkInteral, NetThreadComponent.recvMaxIdleTime, NetThreadComponent.sendMaxIdleTime);

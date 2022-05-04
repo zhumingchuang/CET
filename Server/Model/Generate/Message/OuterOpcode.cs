@@ -1,8 +1,5 @@
 namespace ET
 {
-	/// <summary>
-	/// ÍâÍøĞ­ÒéID
-	/// </summary>
 	public static partial class OuterOpcode
 	{
 		 public const ushort C2M_TestRequest = 10002;

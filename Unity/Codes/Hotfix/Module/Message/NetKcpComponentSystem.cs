@@ -77,6 +77,7 @@ namespace ET
         // 这个channelId是由CreateAcceptChannelId生成的
         public static void OnAccept(this NetKcpComponent self, long channelId, IPEndPoint ipEndPoint)
         {
+            Log.Debug(channelId + "接受客户端连接");
             Session session = self.AddChildWithId<Session, AService>(channelId, self.Service);
             session.RemoteAddress = ipEndPoint;
 

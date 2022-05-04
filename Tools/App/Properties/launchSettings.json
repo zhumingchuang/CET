@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Tools.App": {
+      "commandName": "Project"
+    }
+  }
+}
